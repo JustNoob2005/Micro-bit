@@ -1,0 +1,83 @@
+def on_button_pressed_a():
+    global running
+    running = False
+    maqueen.motor_stop(maqueen.Motors.ALL)
+input.on_button_pressed(Button.A, on_button_pressed_a)
+
+def on_logo_pressed():
+    global runTime, turnsRight, lastTurn, turnsLeft
+    runTime = input.running_time()
+    while running:
+        maqueen.motor_run(maqueen.Motors.ALL, maqueen.Dir.CW, 100)
+        RTCheck = input.running_time()
+        if RTCheck - 5000 > runTime:
+            maqueen.motor_stop(maqueen.Motors.ALL)
+            maqueen.motor_run(maqueen.Motors.ALL, maqueen.Dir.CCW, 50)
+            basic.pause(1000)
+            maqueen.motor_stop(maqueen.Motors.ALL)
+            runTime = input.running_time()
+        if maqueen.ultrasonic() <= 4:
+            maqueen.motor_stop(maqueen.Motors.ALL)
+            maqueen.motor_run(maqueen.Motors.ALL, maqueen.Dir.CCW, 50)
+            basic.pause(500)
+            maqueen.motor_stop(maqueen.Motors.ALL)
+            if not (running):
+                break
+            if turnsRight < 3:
+                runTime = input.running_time()
+                turnsRight += 1
+                maqueen.motor_stop(maqueen.Motors.M2)
+                maqueen.motor_run(maqueen.Motors.M1, maqueen.Dir.CW, 80)
+                basic.pause(1000)
+                maqueen.motor_stop(maqueen.Motors.M1)
+                lastTurn = "right"
+            elif turnsLeft < 3:
+                runTime = input.running_time()
+                turnsLeft += 1
+                maqueen.motor_stop(maqueen.Motors.M1)
+                maqueen.motor_run(maqueen.Motors.M2, maqueen.Dir.CW, 80)
+                basic.pause(1000)
+                maqueen.motor_stop(maqueen.Motors.M2)
+                lastTurn = "left"
+            elif turnsRight == 0 and turnsLeft == 0:
+                runTime = input.running_time()
+                turnsRight += 1
+                maqueen.motor_stop(maqueen.Motors.M2)
+                maqueen.motor_run(maqueen.Motors.M1, maqueen.Dir.CW, 80)
+                basic.pause(1000)
+                maqueen.motor_stop(maqueen.Motors.M1)
+                lastTurn = "right"
+            else:
+                turnsLeft = 0
+                turnsRight = 0
+            if not (running):
+                break
+input.on_logo_event(TouchButtonEvent.PRESSED, on_logo_pressed)
+
+lastTurn = ""
+turnsLeft = 0
+turnsRight = 0
+runTime = 0
+running = False
+doubleTurn = False
+running = True
+maqueen.write_led(maqueen.LED.LED_LEFT, maqueen.LEDswitch.TURN_ON)
+maqueen.write_led(maqueen.LED.LED_RIGHT, maqueen.LEDswitch.TURN_ON)
+basic.show_leds("""
+    . . . . #
+    . . . # .
+    # . # . .
+    . # . . .
+    . . . . .
+    """)
+while True:
+    Maqueen_V5.bottom_show_color(Maqueen_V5.colors(Maqueen_V5.NeoPixelColors.RED))
+    basic.pause(20)
+    Maqueen_V5.bottom_show_color(Maqueen_V5.colors(Maqueen_V5.NeoPixelColors.BLUE))
+    basic.pause(20)
+    Maqueen_V5.bottom_show_color(Maqueen_V5.colors(Maqueen_V5.NeoPixelColors.GREEN))
+    basic.pause(20)
+    Maqueen_V5.bottom_show_color(Maqueen_V5.colors(Maqueen_V5.NeoPixelColors.PURPLE))
+    basic.pause(20)
+    Maqueen_V5.bottom_show_color(Maqueen_V5.colors(Maqueen_V5.NeoPixelColors.YELLOW))
+    basic.pause(20)
